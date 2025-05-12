@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recepción Hostería</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+    input, textarea, button, select {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Panel de Recepción - Hostería</h1>
+  </header>
+  <div class="container">
+    <div class="section">
+      <h2>Apertura / Cierre de Turno</h2>
+      <button onclick="abrirTurno()">Apertura de turno</button>
+      <button onclick="cerrarTurno()">Cierre de turno</button>
+      <p id="estadoTurno"></p>
+    </div>
+
+    <div class="section">
+      <h2>Ingreso de Huésped</h2>
+      <input type="text" id="nombre" placeholder="Nombre completo">
+      <input type="text" id="dni" placeholder="DNI">
+      <input type="text" id="habitacion" placeholder="Número de habitación">
+      <button onclick="registrarHuesped()">Registrar Huésped</button>
+    </div>
+
+    <div class="section">
+      <h2>Historial de Huéspedes</h2>
+      <table id="tablaHuespedes">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>DNI</th>
+            <th>Habitación</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Novedades</h2>
+      <textarea id="novedad" placeholder="Escriba una novedad..."></textarea>
+      <button onclick="guardarNovedad()">Guardar Novedad</button>
+      <button onclick="descargarNovedades()">Descargar Novedades</button>
+      <ul id="listaNovedades"></ul>
+    </div>
+  </div>
+
+  <script>
+    let huespedes = JSON.parse(localStorage.getItem('huespedes')) || [];
+    let novedades = JSON.parse(localStorage.getItem('novedades')) || [];
+    let turnoAbierto = localStorage.getItem('turnoAbierto') === 'true';
+
+    document.getElementById("estadoTurno").innerText = turnoAbierto ? "Turno abierto" : "Turno cerrado";
+
+    function registrarHuesped() {
+      const nombre = document.getElementById('nombre').value;
+      const dni = document.getElementById('dni').value;
+      const habitacion = document.getElementById('habitacion').value;
+      const fecha = new Date().toLocaleString();
+
+      if (!nombre || !dni || !habitacion) return alert("Todos los campos son obligatorios.");
+
+      const nuevo = { nombre, dni, habitacion, fecha };
+      huespedes.push(nuevo);
+      localStorage.setItem('huespedes', JSON.stringify(huespedes));
+      mostrarHuespedes();
+    }
+
+    function mostrarHuespedes() {
+      const cuerpo = document.querySelector("#tablaHuespedes tbody");
+      cuerpo.innerHTML = "";
+      huespedes.forEach(h => {
+        const fila = `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td></tr>`;
+        cuerpo.innerHTML += fila;
+      });
+    }
+
+    function guardarNovedad() {
+      const texto = document.getElementById('novedad').value;
+      if (!texto) return;
+      const item = `${new Date().toLocaleString()} - ${texto}`;
+      novedades.push(item);
+      localStorage.setItem('novedades', JSON.stringify(novedades));
+      mostrarNovedades();
+    }
+
+    function mostrarNovedades() {
+      const lista = document.getElementById('listaNovedades');
+      lista.innerHTML = "";
+      novedades.forEach(n => {
+        const li = document.createElement('li');
+        li.textContent = n;
+        lista.appendChild(li);
+      });
+    }
+
+    function descargarNovedades() {
+      const texto = novedades.join("\n");
+      const blob = new Blob([texto], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "novedades.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function abrirTurno() {
+      turnoAbierto = true;
+      localStorage.setItem('turnoAbierto', 'true');
+      document.getElementById("estadoTurno").innerText = "Turno abierto";
+    }
+
+    function cerrarTurno() {
+      turnoAbierto = false;
+      localStorage.setItem('turnoAbierto', 'false');
+      document.getElementById("estadoTurno").innerText = "Turno cerrado";
+    }
+
+    mostrarHuespedes();
+    mostrarNovedades();
+  </script>
+</body>
+</html>
