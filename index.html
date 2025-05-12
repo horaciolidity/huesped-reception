@@ -51,6 +51,21 @@
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
+    #searchModal {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    #searchModal table {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -70,11 +85,17 @@
       <input type="text" id="nombre" placeholder="Nombre completo">
       <input type="text" id="dni" placeholder="DNI">
       <input type="text" id="habitacion" placeholder="Número de habitación">
+      <input type="date" id="fechaIngreso">
+      <input type="number" id="diasEstadia" placeholder="Días de estadía">
+      <input type="number" id="montoSenia" placeholder="Monto de seña">
+      <input type="text" id="telefono" placeholder="Teléfono">
+      <input type="email" id="correo" placeholder="Correo electrónico">
+      <textarea id="novedadHuesped" placeholder="Novedad relacionada al huésped..."></textarea>
       <button onclick="registrarHuesped()">Registrar Huésped</button>
     </div>
 
     <div class="section">
-      <h2>Historial de Huéspedes</h2>
+      <h2>Últimos 5 Huéspedes</h2>
       <table id="tablaHuespedes">
         <thead>
           <tr>
@@ -86,15 +107,39 @@
         </thead>
         <tbody></tbody>
       </table>
+      <button onclick="abrirBusqueda()">Buscar en Historial Completo</button>
     </div>
 
     <div class="section">
-      <h2>Novedades</h2>
+      <h2>Novedades Generales</h2>
       <textarea id="novedad" placeholder="Escriba una novedad..."></textarea>
       <button onclick="guardarNovedad()">Guardar Novedad</button>
       <button onclick="descargarNovedades()">Descargar Novedades</button>
       <ul id="listaNovedades"></ul>
     </div>
+
+    <div class="section">
+      <h2>Exportar / Importar Registros</h2>
+      <button onclick="exportarHuespedes()">Exportar registros (.txt)</button>
+      <input type="file" id="archivoImportar" accept=".txt" onchange="importarHuespedes()">
+    </div>
+  </div>
+
+  <div id="searchModal">
+    <h3>Buscar Huésped</h3>
+    <input type="text" id="busqueda" placeholder="Ingrese nombre o DNI" oninput="buscarHuesped()">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>DNI</th>
+          <th>Habitación</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody id="resultadoBusqueda"></tbody>
+    </table>
+    <button onclick="cerrarBusqueda()">Cerrar</button>
   </div>
 
   <script>
@@ -108,11 +153,16 @@
       const nombre = document.getElementById('nombre').value;
       const dni = document.getElementById('dni').value;
       const habitacion = document.getElementById('habitacion').value;
-      const fecha = new Date().toLocaleString();
+      const fecha = document.getElementById('fechaIngreso').value;
+      const dias = document.getElementById('diasEstadia').value;
+      const senia = document.getElementById('montoSenia').value;
+      const telefono = document.getElementById('telefono').value;
+      const correo = document.getElementById('correo').value;
+      const novedad = document.getElementById('novedadHuesped').value;
 
-      if (!nombre || !dni || !habitacion) return alert("Todos los campos son obligatorios.");
+      if (!nombre || !dni || !habitacion || !fecha) return alert("Complete los campos obligatorios.");
 
-      const nuevo = { nombre, dni, habitacion, fecha };
+      const nuevo = { nombre, dni, habitacion, fecha, dias, senia, telefono, correo, novedad };
       huespedes.push(nuevo);
       localStorage.setItem('huespedes', JSON.stringify(huespedes));
       mostrarHuespedes();
@@ -121,10 +171,30 @@
     function mostrarHuespedes() {
       const cuerpo = document.querySelector("#tablaHuespedes tbody");
       cuerpo.innerHTML = "";
-      huespedes.forEach(h => {
+      const ultimos = huespedes.slice(-5);
+      ultimos.forEach(h => {
         const fila = `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td></tr>`;
         cuerpo.innerHTML += fila;
       });
+    }
+
+    function buscarHuesped() {
+      const query = document.getElementById("busqueda").value.toLowerCase();
+      const resultados = huespedes.filter(h => h.nombre.toLowerCase().includes(query) || h.dni.includes(query));
+      const tbody = document.getElementById("resultadoBusqueda");
+      tbody.innerHTML = "";
+      resultados.forEach(h => {
+        const fila = `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td></tr>`;
+        tbody.innerHTML += fila;
+      });
+    }
+
+    function abrirBusqueda() {
+      document.getElementById("searchModal").style.display = "block";
+    }
+
+    function cerrarBusqueda() {
+      document.getElementById("searchModal").style.display = "none";
     }
 
     function guardarNovedad() {
@@ -155,6 +225,40 @@
       a.download = "novedades.txt";
       a.click();
       URL.revokeObjectURL(url);
+    }
+
+    function exportarHuespedes() {
+      const texto = JSON.stringify(huespedes, null, 2);
+      const blob = new Blob([texto], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "huespedes.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importarHuespedes() {
+      const archivo = document.getElementById('archivoImportar').files[0];
+      if (!archivo) return;
+
+      const lector = new FileReader();
+      lector.onload = function(evento) {
+        try {
+          const datos = JSON.parse(evento.target.result);
+          if (Array.isArray(datos)) {
+            huespedes = datos;
+            localStorage.setItem('huespedes', JSON.stringify(huespedes));
+            mostrarHuespedes();
+            alert("Registros importados exitosamente.");
+          } else {
+            throw new Error("Formato inválido");
+          }
+        } catch (error) {
+          alert("Error al importar registros: " + error.message);
+        }
+      };
+      lector.readAsText(archivo);
     }
 
     function abrirTurno() {
