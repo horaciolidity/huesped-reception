@@ -299,15 +299,28 @@ ul {
       });
     }
 
-    function buscarHuesped() {
-      const query = document.getElementById("busqueda").value.toLowerCase();
-      const resultados = huespedes.filter(h => h.nombre.toLowerCase().includes(query) || h.dni.includes(query));
-      const tbody = document.getElementById("resultadoBusqueda");
-      tbody.innerHTML = "";
-      resultados.forEach(h => {
-        tbody.innerHTML += `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td><td>${h.dias}</td><td>${h.senia}</td><td>${h.telefono}</td><td>${h.correo}</td><td>${h.novedad}</td></tr>`;
-      });
-    }
+   function buscarHuesped() {
+  const query = document.getElementById("busqueda").value.toLowerCase();
+  const resultados = huespedes.filter(h => h.nombre.toLowerCase().includes(query) || h.dni.includes(query));
+  const tbody = document.getElementById("resultadoBusqueda");
+  tbody.innerHTML = "";
+  resultados.forEach((h, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${h.nombre}</td>
+        <td>${h.dni}</td>
+        <td>${h.habitacion}</td>
+        <td>${h.fecha}</td>
+        <td>${h.dias}</td>
+        <td>${h.senia}</td>
+        <td>${h.telefono}</td>
+        <td>${h.correo}</td>
+        <td>${h.novedad}</td>
+        <td><button onclick='importarAHuesped(${JSON.stringify(h)})'>Importar</button></td>
+      </tr>`;
+  });
+}
+
 
     function iniciarSesion() {
       const user = document.getElementById('usuario').value;
@@ -387,6 +400,19 @@ ul {
       };
       lector.readAsText(archivo);
     }
+    function importarAHuesped(h) {
+  document.getElementById('nombre').value = h.nombre;
+  document.getElementById('dni').value = h.dni;
+  document.getElementById('habitacion').value = h.habitacion;
+  document.getElementById('fechaIngreso').value = h.fecha;
+  document.getElementById('diasEstadia').value = h.dias;
+  document.getElementById('montoSenia').value = h.senia;
+  document.getElementById('telefono').value = h.telefono;
+  document.getElementById('correo').value = h.correo;
+  document.getElementById('novedadHuesped').value = h.novedad;
+  cerrarBusqueda();
+}
+
 
     function abrirTurno() {
       turnoAbierto = true;
