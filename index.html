@@ -47,6 +47,16 @@ input, textarea, select {
   transition: all 0.3s ease;
   font-size: 1rem;
 }
+    .banner {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .banner img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
@@ -148,6 +158,9 @@ ul {
     <h1>Panel de Recepción - Hostería</h1>
   </header>
  <div class="container" id="loginSection">
+    <div class="banner">
+      <img src="banner.jpg" alt="Bienvenido a la Hostería">
+    </div>
     <div class="section">
       <h2>Inicio de Sesión</h2>
       <input type="text" id="usuario" placeholder="Usuario">
