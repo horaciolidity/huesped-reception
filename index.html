@@ -195,6 +195,8 @@ ul {
       <input type="email" id="correo" placeholder="Correo electrónico">
       <textarea id="novedadHuesped" placeholder="Novedad relacionada al huésped..."></textarea>
       <button onclick="registrarHuesped()">Registrar Huésped</button>
+      <button onclick="imprimirRecibo()">Imprimir Recibo</button>
+
     </div>
 
     <div class="section">
@@ -411,6 +413,50 @@ ul {
   document.getElementById('correo').value = h.correo;
   document.getElementById('novedadHuesped').value = h.novedad;
   cerrarBusqueda();
+}
+function imprimirRecibo() {
+  const nombre = document.getElementById('nombre').value;
+  const dni = document.getElementById('dni').value;
+  const habitacion = document.getElementById('habitacion').value;
+  const fecha = document.getElementById('fechaIngreso').value;
+  const dias = document.getElementById('diasEstadia').value;
+  const senia = document.getElementById('montoSenia').value;
+  const telefono = document.getElementById('telefono').value;
+  const correo = document.getElementById('correo').value;
+  const novedad = document.getElementById('novedadHuesped').value;
+
+  const contenido = `
+    <html>
+    <head>
+      <title>Recibo de Huésped</title>
+      <style>
+        body { font-family: sans-serif; padding: 20px; }
+        h2 { text-align: center; color: #0072ff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        td { padding: 8px; border-bottom: 1px solid #ccc; }
+      </style>
+    </head>
+    <body>
+      <h2>Recibo de Registro de Huésped</h2>
+      <table>
+        <tr><td><strong>Nombre:</strong></td><td>${nombre}</td></tr>
+        <tr><td><strong>DNI:</strong></td><td>${dni}</td></tr>
+        <tr><td><strong>Habitación:</strong></td><td>${habitacion}</td></tr>
+        <tr><td><strong>Fecha de Ingreso:</strong></td><td>${fecha}</td></tr>
+        <tr><td><strong>Días de Estadía:</strong></td><td>${dias}</td></tr>
+        <tr><td><strong>Monto de Seña:</strong></td><td>${senia}</td></tr>
+        <tr><td><strong>Teléfono:</strong></td><td>${telefono}</td></tr>
+        <tr><td><strong>Correo:</strong></td><td>${correo}</td></tr>
+        <tr><td><strong>Novedad:</strong></td><td>${novedad}</td></tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  const ventana = window.open('', '_blank');
+  ventana.document.write(contenido);
+  ventana.document.close();
+  ventana.print();
 }
 
 
