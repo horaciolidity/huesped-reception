@@ -147,14 +147,17 @@ ul {
   <header>
     <h1>Panel de Recepción - Hostería</h1>
   </header>
-  <div class="container">
+ <div class="container" id="loginSection">
     <div class="section">
-      <h2>Apertura / Cierre de Turno</h2>
-      <button onclick="abrirTurno()">Apertura de turno</button>
-      <button onclick="cerrarTurno()">Cierre de turno</button>
-      <p id="estadoTurno"></p>
+      <h2>Inicio de Sesión</h2>
+      <input type="text" id="usuario" placeholder="Usuario">
+      <input type="password" id="clave" placeholder="Contraseña">
+      <button onclick="iniciarSesion()">Iniciar Sesión</button>
+      <p id="estadoSesion" style="margin-top: 10px; font-weight: bold;"></p>
     </div>
+  </div>
 
+  <div class="container" id="panelPrincipal" style="display: none;">
     <div class="section">
       <h2>Ingreso de Huésped</h2>
       <input type="text" id="nombre" placeholder="Nombre completo">
