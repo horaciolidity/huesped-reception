@@ -188,7 +188,6 @@
       localStorage.setItem('huespedes', JSON.stringify(huespedes));
       mostrarHuespedes();
 
-      // Limpiar campos
       document.getElementById('nombre').value = "";
       document.getElementById('dni').value = "";
       document.getElementById('habitacion').value = "";
@@ -198,10 +197,6 @@
       document.getElementById('telefono').value = "";
       document.getElementById('correo').value = "";
       document.getElementById('novedadHuesped').value = "";
-    };
-      huespedes.push(nuevo);
-      localStorage.setItem('huespedes', JSON.stringify(huespedes));
-      mostrarHuespedes();
     }
 
     function mostrarHuespedes() {
