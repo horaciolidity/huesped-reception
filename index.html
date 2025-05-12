@@ -230,6 +230,9 @@ ul {
     let novedades = JSON.parse(localStorage.getItem('novedades')) || [];
     let turnoAbierto = localStorage.getItem('turnoAbierto') === 'true';
 
+    const usuarioValido = "admin";
+    const claveValida = "1234";
+
     document.getElementById("estadoTurno").innerText = turnoAbierto ? "Turno abierto" : "Turno cerrado";
 
     function registrarHuesped() {
@@ -279,6 +282,18 @@ ul {
       resultados.forEach(h => {
         tbody.innerHTML += `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td><td>${h.dias}</td><td>${h.senia}</td><td>${h.telefono}</td><td>${h.correo}</td><td>${h.novedad}</td></tr>`;
       });
+    }
+
+    function iniciarSesion() {
+      const user = document.getElementById('usuario').value;
+      const pass = document.getElementById('clave').value;
+      if (user === usuarioValido && pass === claveValida) {
+        document.getElementById('estadoSesion').innerText = "Sesión iniciada correctamente.";
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('panelPrincipal').style.display = 'block';
+      } else {
+        document.getElementById('estadoSesion').innerText = "Credenciales incorrectas.";
+      }
     }
 
     function abrirBusqueda() {
