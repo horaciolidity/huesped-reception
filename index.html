@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Recepción Hostería</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #e0f7fa, #ffffff);
       margin: 0;
       padding: 0;
@@ -25,7 +25,6 @@
     }
     h2 {
       border-bottom: 2px solid #00838f;
-      padding-bottom: 5px;
       color: #006064;
     }
     input, textarea, button, select {
@@ -55,7 +54,6 @@
     }
     th, td {
       padding: 8px;
-      text-align: left;
     }
     .section {
       background: white;
@@ -79,9 +77,6 @@
       max-height: 80vh;
       overflow-y: auto;
     }
-    #searchModal table {
-      margin-top: 10px;
-    }
   </style>
 </head>
 <body>
@@ -100,7 +95,7 @@
       <h2>Ingreso de Huésped</h2>
       <input type="text" id="nombre" placeholder="Nombre completo">
       <input type="text" id="dni" placeholder="DNI">
-      <input type="text" id="habitacion" placeholder="Número de habitación">
+      <input type="text" id="habitacion" placeholder="Habitación">
       <input type="datetime-local" id="fechaIngreso">
       <input type="number" id="diasEstadia" placeholder="Días de estadía">
       <input type="number" id="montoSenia" placeholder="Monto de seña">
@@ -188,6 +183,7 @@
       localStorage.setItem('huespedes', JSON.stringify(huespedes));
       mostrarHuespedes();
 
+      // Limpiar campos
       document.getElementById('nombre').value = "";
       document.getElementById('dni').value = "";
       document.getElementById('habitacion').value = "";
@@ -204,8 +200,7 @@
       cuerpo.innerHTML = "";
       const ultimos = huespedes.slice(-5);
       ultimos.forEach(h => {
-        const fila = `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td></tr>`;
-        cuerpo.innerHTML += fila;
+        cuerpo.innerHTML += `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td></tr>`;
       });
     }
 
@@ -215,8 +210,7 @@
       const tbody = document.getElementById("resultadoBusqueda");
       tbody.innerHTML = "";
       resultados.forEach(h => {
-        const fila = `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td><td>${h.dias}</td><td>${h.senia}</td><td>${h.telefono}</td><td>${h.correo}</td><td>${h.novedad}</td></tr>`;
-        tbody.innerHTML += fila;
+        tbody.innerHTML += `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td><td>${h.dias}</td><td>${h.senia}</td><td>${h.telefono}</td><td>${h.correo}</td><td>${h.novedad}</td></tr>`;
       });
     }
 
@@ -231,8 +225,7 @@
     function guardarNovedad() {
       const texto = document.getElementById('novedad').value;
       if (!texto) return;
-      const item = `${new Date().toLocaleString()} - ${texto}`;
-      novedades.push(item);
+      novedades.push(`${new Date().toLocaleString()} - ${texto}`);
       localStorage.setItem('novedades', JSON.stringify(novedades));
       mostrarNovedades();
     }
@@ -248,25 +241,21 @@
     }
 
     function descargarNovedades() {
-      const texto = novedades.join("\n");
-      const blob = new Blob([texto], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
+      const blob = new Blob([novedades.join("\\n")], { type: "text/plain" });
       const a = document.createElement("a");
-      a.href = url;
+      a.href = URL.createObjectURL(blob);
       a.download = "novedades.txt";
       a.click();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(a.href);
     }
 
     function exportarHuespedes() {
-      const texto = JSON.stringify(huespedes, null, 2);
-      const blob = new Blob([texto], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
+      const blob = new Blob([JSON.stringify(huespedes, null, 2)], { type: "text/plain" });
       const a = document.createElement("a");
-      a.href = url;
+      a.href = URL.createObjectURL(blob);
       a.download = "huespedes.txt";
       a.click();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(a.href);
     }
 
     function importarHuespedes() {
@@ -274,9 +263,9 @@
       if (!archivo) return;
 
       const lector = new FileReader();
-      lector.onload = function(evento) {
+      lector.onload = e => {
         try {
-          const datos = JSON.parse(evento.target.result);
+          const datos = JSON.parse(e.target.result);
           if (Array.isArray(datos)) {
             huespedes = datos;
             localStorage.setItem('huespedes', JSON.stringify(huespedes));
@@ -286,7 +275,7 @@
             throw new Error("Formato inválido");
           }
         } catch (error) {
-          alert("Error al importar registros: " + error.message);
+          alert("Error al importar: " + error.message);
         }
       };
       lector.readAsText(archivo);
