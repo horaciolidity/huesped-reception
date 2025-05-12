@@ -6,16 +6,17 @@
   <title>Recepción Hostería</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
       margin: 0;
       padding: 0;
     }
     header {
-      background: #2c3e50;
+      background: #006064;
       color: white;
       padding: 20px;
       text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     .container {
       padding: 20px;
@@ -23,14 +24,26 @@
       margin: auto;
     }
     h2 {
-      border-bottom: 2px solid #ccc;
+      border-bottom: 2px solid #00838f;
       padding-bottom: 5px;
+      color: #006064;
     }
     input, textarea, button, select {
       padding: 10px;
       margin: 5px 0;
       width: 100%;
       box-sizing: border-box;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #00838f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #006064;
     }
     table {
       width: 100%;
@@ -48,20 +61,23 @@
       background: white;
       padding: 20px;
       margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     #searchModal {
       display: none;
       position: fixed;
-      top: 20%;
+      top: 10%;
       left: 50%;
       transform: translateX(-50%);
       background: white;
       padding: 20px;
       border: 1px solid #ccc;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
       z-index: 1000;
+      width: 80%;
+      max-height: 80vh;
+      overflow-y: auto;
     }
     #searchModal table {
       margin-top: 10px;
@@ -85,7 +101,7 @@
       <input type="text" id="nombre" placeholder="Nombre completo">
       <input type="text" id="dni" placeholder="DNI">
       <input type="text" id="habitacion" placeholder="Número de habitación">
-      <input type="date" id="fechaIngreso">
+      <input type="datetime-local" id="fechaIngreso">
       <input type="number" id="diasEstadia" placeholder="Días de estadía">
       <input type="number" id="montoSenia" placeholder="Monto de seña">
       <input type="text" id="telefono" placeholder="Teléfono">
@@ -135,6 +151,11 @@
           <th>DNI</th>
           <th>Habitación</th>
           <th>Fecha</th>
+          <th>Días</th>
+          <th>Seña</th>
+          <th>Teléfono</th>
+          <th>Correo</th>
+          <th>Novedad</th>
         </tr>
       </thead>
       <tbody id="resultadoBusqueda"></tbody>
@@ -184,7 +205,7 @@
       const tbody = document.getElementById("resultadoBusqueda");
       tbody.innerHTML = "";
       resultados.forEach(h => {
-        const fila = `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td></tr>`;
+        const fila = `<tr><td>${h.nombre}</td><td>${h.dni}</td><td>${h.habitacion}</td><td>${h.fecha}</td><td>${h.dias}</td><td>${h.senia}</td><td>${h.telefono}</td><td>${h.correo}</td><td>${h.novedad}</td></tr>`;
         tbody.innerHTML += fila;
       });
     }
